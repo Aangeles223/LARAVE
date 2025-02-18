@@ -63,62 +63,37 @@
         </div>
     </div>
 
-    <!-- Modal para editar alumno -->
-    <div id="modal-editar" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden flex justify-center items-center">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 class="text-2xl font-bold mb-4">Editar Alumno</h2>
-            <input type="hidden" id="alumno-id" value="{{ $alumno->id }}">
-            <label class="block">Nombre:</label>
-            <input type="text" id="edit-nombre" class="w-full border p-2 rounded mb-2" value="{{ $alumno->nombre }}">
-            <label class="block">Apellido Paterno:</label>
-            <input type="text" id="edit-apellidoP" class="w-full border p-2 rounded mb-2" value="{{ $alumno->apellidoP }}">
-            <label class="block">Apellido Materno:</label>
-            <input type="text" id="edit-apellidoM" class="w-full border p-2 rounded mb-2" value="{{ $alumno->apellidoM }}">
-            <label class="block">Fecha de Nacimiento:</label>
-            <input type="date" id="edit-fecha_nacimiento" class="w-full border p-2 rounded mb-2" value="{{ $alumno->fecha_nacimiento }}">
-            <label class="block">Cuatrimestre:</label>
-            <input type="number" id="edit-cuatrimestre" class="w-full border p-2 rounded mb-2" value="{{ $alumno->cuatrimestre }}">
-
-            <div class="flex justify-end space-x-2 mt-4">
-                <button class="bg-gray-500 text-white px-4 py-2 rounded cerrar-modal">Cancelar</button>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded guardar-edicion">Guardar</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        $(document).on("click", "#editarAlumno", function() {
-            $("#modal-editar").removeClass("hidden");
+        $(document).on("click", ".actualizar", function() {
+            let row = $(this).closest(".fila-calificacion");
+            let id = row.data("id");
+            let parcial1 = parseFloat(row.find(".parcial-input").eq(0).val()) || 0;
+            let parcial2 = parseFloat(row.find(".parcial-input").eq(1).val()) || 0;
+            let parcial3 = parseFloat(row.find(".parcial-input").eq(2).val()) || 0;
+
+            let promedio = (parcial1 + parcial2 + parcial3) / 3;
+            let probabilidad = (promedio >= 70) ? ((promedio / 100) * 100).toFixed(2) : "0.00";
+
+            row.find(".probabilidad").text(probabilidad + "%");
+            calcularProbabilidadCuatrimestre();
         });
 
-        $(document).on("click", ".cerrar-modal", function() {
-            $("#modal-editar").addClass("hidden");
-        });
+        function calcularProbabilidadCuatrimestre() {
+            let filas = $(".fila-calificacion");
+            let totalMaterias = filas.length;
+            let materiasAprobadas = 0;
 
-        $(document).on("click", ".guardar-edicion", function() {
-            let id = $("#alumno-id").val();
-            let nombre = $("#edit-nombre").val();
-            let apellidoP = $("#edit-apellidoP").val();
-            let apellidoM = $("#edit-apellidoM").val();
-            let fecha_nacimiento = $("#edit-fecha_nacimiento").val();
-            let cuatrimestre = $("#edit-cuatrimestre").val();
-
-            $.ajax({
-                url: `/editar-alumno/${id}`,
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    nombre, apellidoP, apellidoM, fecha_nacimiento, cuatrimestre
-                },
-                success: function(response) {
-                    alert(response.mensaje);
-                    location.reload();
-                },
-                error: function(xhr) {
-                    alert("Error al actualizar los datos del alumno.");
+            filas.each(function() {
+                let probabilidadTexto = $(this).find(".probabilidad").text().replace("%", "");
+                let probabilidad = parseFloat(probabilidadTexto) || 0;
+                if (probabilidad > 0) {
+                    materiasAprobadas++;
                 }
             });
-        });
+
+            let probabilidadCuatrimestre = (materiasAprobadas / totalMaterias) * 100;
+            $("#probabilidad-cuatrimestre").text(probabilidadCuatrimestre.toFixed(2) + "%");
+        }
     </script>
 </body>
 </html>
