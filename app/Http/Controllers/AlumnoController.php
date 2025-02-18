@@ -121,18 +121,24 @@ class AlumnoController extends Controller
             ->select('persona.*', 'carrera.nombre as carrera')
             ->where('persona.id', $id)
             ->first();
-
+    
         if (!$alumno) {
             return redirect()->route('alumnos.index')->with('error', 'Alumno no encontrado');
         }
-
+    
+        // Obtener las materias disponibles de la carrera del alumno
+        $materias = DB::table('materias')
+            ->where('carrera_id', $alumno->carrera_id)
+            ->get();
+    
         // Obtener calificaciones del alumno
         $calificaciones = DB::table('calificaciones_materia')
             ->join('materias', 'calificaciones_materia.materias_id', '=', 'materias.id')
             ->select('materias.nombre as materia', 'calificaciones_materia.*')
             ->where('calificaciones_materia.persona_id', $id)
             ->get();
-
-        return view('perfil_alumno', compact('alumno', 'calificaciones'));
+    
+        return view('perfil_alumno', compact('alumno', 'materias', 'calificaciones'));
     }
+    
 }

@@ -9,7 +9,8 @@ use App\Http\Controllers\CalificacionController;
 
 Route::get('/alumno/{id}', [AlumnoController::class, 'perfil'])->name('alumno.perfil');
 
-
+Route::put('/calificaciones/{id}', [CalificacionController::class, 'actualizarCalificacion']);
+Route::post('/alumno/{id}/asignar-materia', [CalificacionController::class, 'asignarMateria']);
 Route::post('/alumnos/update/{id}', [AlumnoController::class, 'update'])->name('alumnos.update');
 Route::post('/actualizar-calificacion/{id}', [CalificacionController::class, 'actualizar'])->name('actualizar.calificacion');
 Route::post('/eliminar-calificacion/{id}', [CalificacionController::class, 'eliminar']);
