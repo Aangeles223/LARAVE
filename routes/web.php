@@ -13,6 +13,7 @@ Route::get('/alumno/{id}', [AlumnoController::class, 'perfil'])->name('alumno.pe
 Route::post('/editar-alumno/{id}', [AlumnoController::class, 'editar'])->name('editar.alumno');
 Route::post('/actualizar-calificacion/{id}', [CalificacionController::class, 'actualizar'])->name('actualizar.calificacion');
 Route::post('/eliminar-calificacion/{id}', [CalificacionController::class, 'eliminar']);
+Route::post('/alumnos/store', [AlumnoController::class, 'store'])->name('alumnos.store');
 
 Route::get('/', function () {
     return view('index');
