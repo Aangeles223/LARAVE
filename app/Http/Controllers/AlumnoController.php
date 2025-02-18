@@ -15,14 +15,18 @@ class AlumnoController extends Controller
             ->select('persona.*', 'carrera.nombre as carrera')
             ->where('persona.id', $id)
             ->first();
-
+    
+        if (!$alumno) {
+            return abort(404, 'Alumno no encontrado.');
+        }
+    
         // Obtener calificaciones del alumno
         $calificaciones = DB::table('calificaciones_materia')
             ->join('materias', 'calificaciones_materia.materias_id', '=', 'materias.id')
             ->select('materias.nombre as materia', 'calificaciones_materia.*')
             ->where('calificaciones_materia.persona_id', $id)
             ->get();
-
+    
         return view('perfil_alumno', compact('alumno', 'calificaciones'));
     }
 }

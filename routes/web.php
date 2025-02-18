@@ -3,6 +3,17 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AlumnoController;
+use App\Http\Controllers\CalificacionController;
+
+
+
+Route::get('/alumno/{id}', [AlumnoController::class, 'perfil'])->name('alumno.perfil');
+
+
+Route::post('/editar-alumno/{id}', [AlumnoController::class, 'editar'])->name('editar.alumno');
+Route::post('/actualizar-calificacion/{id}', [CalificacionController::class, 'actualizar'])->name('actualizar.calificacion');
+Route::post('/eliminar-calificacion/{id}', [CalificacionController::class, 'eliminar']);
+
 Route::get('/', function () {
     return view('index');
 });
@@ -17,3 +28,4 @@ Route::get('/', function () {
 
     return view('index', compact('alumnos'));
 });
+
